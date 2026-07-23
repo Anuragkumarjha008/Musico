@@ -25,3 +25,8 @@ server:
 logging:
   level:
     org.springframework.security: INFO
+
+jwt:
+  secret: ocHoC6cJEMF4Yrog/69DsTmJC0S+l/h+F5HLOQlTm5s=
+  access-token-expiration: 1800000
+  refresh-token-expiration: 2592000000
