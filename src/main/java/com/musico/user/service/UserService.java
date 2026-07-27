@@ -5,5 +5,5 @@ import com.musico.user.dto.UserResponse;
 
 public interface UserService {
 
-    UserResponse register(RegisterRequest request);
+    //UserResponse register(RegisterRequest request);
 }

@@ -31,7 +31,7 @@ public class AuthController {
     public ApiResponse<UserResponse> register(
             @Valid @RequestBody RegisterRequest request) {
 
-        UserResponse response = userService.register(request);
+        UserResponse response = authService.register(request);
 
         return ApiResponse.success(
                 response, "User registered successfully"
