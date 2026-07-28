@@ -1,10 +1,7 @@
 package com.musico.user.controller;
 
 import com.musico.common.response.ApiResponse;
-import com.musico.user.dto.LoginRequest;
-import com.musico.user.dto.LoginResponse;
-import com.musico.user.dto.RegisterRequest;
-import com.musico.user.dto.UserResponse;
+import com.musico.user.dto.*;
 import com.musico.user.service.AuthService;
 import com.musico.user.service.UserService;
 import jakarta.validation.Valid;
@@ -44,6 +41,22 @@ public class AuthController {
     ) {
 
         LoginResponse response = authService.login(request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<LoginResponse>builder()
+                        .success(true)
+                        .message("Login successful")
+                        .data(response)
+                        .timestamp(Instant.now())
+                        .build()
+        );
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(
+            @Valid @RequestBody RefreshTokenRequest request) {
+
+        LoginResponse response = authService.refreshToken(request);
 
         return ResponseEntity.ok(
                 ApiResponse.<LoginResponse>builder()

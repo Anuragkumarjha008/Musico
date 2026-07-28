@@ -28,5 +28,5 @@ logging:
 
 jwt:
   secret: ocHoC6cJEMF4Yrog/69DsTmJC0S+l/h+F5HLOQlTm5s=
-  access-token-expiration: 1800000
-  refresh-token-expiration: 2592000000
+  access-token-expiration-seconds: 1800000
+  refresh-token-expiration-days: 30

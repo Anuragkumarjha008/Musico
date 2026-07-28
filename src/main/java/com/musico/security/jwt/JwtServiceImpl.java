@@ -23,12 +23,12 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateAccessToken(User user) {
-        return generateToken(new HashMap<>(), user, jwtProperties.getAccessTokenExpiration());
+        return generateToken(new HashMap<>(), user, jwtProperties.getAccessTokenExpirationSeconds());
     }
 
     @Override
     public String generateRefreshToken(User user) {
-        return generateToken(new HashMap<>(), user, jwtProperties.getRefreshTokenExpiration());
+        return generateToken(new HashMap<>(), user, jwtProperties.getRefreshTokenExpirationDays());
     }
 
     private String generateToken(

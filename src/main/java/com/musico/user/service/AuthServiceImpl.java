@@ -2,11 +2,10 @@ package com.musico.user.service;
 
 
 import com.musico.common.exception.DuplicateResourceException;
+import com.musico.security.jwt.JwtProperties;
 import com.musico.security.jwt.JwtService;
-import com.musico.user.dto.LoginRequest;
-import com.musico.user.dto.LoginResponse;
-import com.musico.user.dto.RegisterRequest;
-import com.musico.user.dto.UserResponse;
+import com.musico.user.dto.*;
+import com.musico.user.entity.RefreshToken;
 import com.musico.user.mapper.UserMapper;
 import com.musico.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,16 +30,20 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
+    private final JwtProperties jwtProperties;
 
     public AuthServiceImpl(UserRepository userRepository,
                            UserMapper userMapper,
-                           PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService) {
+                           PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService, RefreshTokenService refreshTokenService, JwtProperties jwtProperties) {
 
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager=authenticationManager;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
+        this.jwtProperties = jwtProperties;
     }
 
     @Override
@@ -81,10 +84,42 @@ public class AuthServiceImpl implements AuthService {
 
         String accessToken = jwtService.generateAccessToken(user);
 
+        refreshTokenService.revokeAllUserTokens(user);
+        RefreshToken refreshToken =
+                refreshTokenService.createRefreshToken(user);
+
         return LoginResponse.builder()
                 .accessToken(accessToken)
+                .refreshToken(refreshToken.getRefreshToken())
+                .expiresIn(jwtProperties.getAccessTokenExpirationSeconds())
                 .tokenType("Bearer")
-                .expiresIn(900L)
                 .build();
+    }
+
+    @Override
+    public LoginResponse refreshToken(RefreshTokenRequest request){
+
+        RefreshToken refreshToken =
+                refreshTokenService.findByToken(
+                        request.getRefreshToken()
+                );
+
+        refreshTokenService.verifyNotRevoked(refreshToken);
+        refreshTokenService.verifyExpiration(refreshToken);
+        User user = refreshToken.getUser();
+        String accessToken =
+                jwtService.generateRefreshToken(user);
+        refreshTokenService.revokeToken(refreshToken);
+        RefreshToken newRefreshToken =
+                refreshTokenService.createRefreshToken(user);
+
+        return LoginResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(newRefreshToken.getRefreshToken())
+                .expiresIn(jwtProperties.getAccessTokenExpirationSeconds())
+                .tokenType("Bearer")
+                .build();
+
+
     }
 }

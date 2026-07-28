@@ -13,8 +13,8 @@ public class JwtProperties {
 
     private String secret;
 
-    private long accessTokenExpiration;
+    private long accessTokenExpirationSeconds;
 
-    private long refreshTokenExpiration;
+    private long refreshTokenExpirationDays;
 
 }
