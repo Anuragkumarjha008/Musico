@@ -65,8 +65,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
         return refreshTokenRepository
                 .findByRefreshToken(token)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Refresh token not found."
+                        new InvalidTokenException(
+                                "Invalid refresh token."
                         ));
     }
 

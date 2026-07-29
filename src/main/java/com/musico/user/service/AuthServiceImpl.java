@@ -108,7 +108,7 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenService.verifyExpiration(refreshToken);
         User user = refreshToken.getUser();
         String accessToken =
-                jwtService.generateRefreshToken(user);
+                jwtService.generateAccessToken(user);
         refreshTokenService.revokeToken(refreshToken);
         RefreshToken newRefreshToken =
                 refreshTokenService.createRefreshToken(user);
